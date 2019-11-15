@@ -1,0 +1,105 @@
+---
+title: "Diversidad Funcional"
+author: "Carlos Iván Espinosa"
+date: "14 de noviembre de 2019"
+output: 
+  html_document:
+    fig_caption: yes
+    highlight: haddock
+    number_sections: yes
+    theme: united
+    toc: yes
+    toc_float:
+      smooth_scroll: no
+---
+
+#Introducción
+
+Una pregunta clásica en ecología vegetal es cómo se ensamblan las comunidades locales a partir de un grupo disponible de especies (Diamond 1975; Weiher, Clarke y Keddy 1998; Cornwell y Ackerly 2009). Dos hipótesis han sido propuestas para responder esta pregunta. Por un lado, Hubbell (2001) propone que el ensamble de comunidades es un proceso determinado por la estocasticidad demográfica, este postulado propone las diferentes especies no tienen ventajas competitivas entre ellas, así aunque las especies sean funcionalmnete distintas esa diferencia no beneficia a la hora de establecerse en un determinado sitio. La segunda hipótesis propone que diferentes especies de plantas tienen más éxito bajo diferentes condiciones en el paisaje, y esto se debe a que tienen diferentes rasgos (Schimper en 1898). 
+
+De esta forma, se supone que el ensamblaje de las comunidades representa el resultado de diferentes fuerzas. Sin embargo esas fuerzas pueden operar de forma opuesta a lo largo de un nicho. Bajo condiciones abióticas fuertes, las especies con determinados caracteres son filtradas incrementando la similitud de rasgos de la comunidad esto es conocido como _filtrado ambiental_ (Weiher y Keddy 1995; Cornwell, Schwilk y Ackerly 2006). Por otro lado, esta la idea que las especies funcionalmente similares explotan los recursos de igual forma, por lo que son más proclives a tener interacciones negativas, de esta forma las especies bajo condiciones ambientales idóneas  evitan ser demasiado similares a las especies coexistentes (partición de nicho, limitación de similitud) (MacArthur y Levins 1967; Chesson 2000). Con base en estos supuestos, una expectativa generalizada es que la diversidad funcional, la diversidad de rasgos que influyen en la estructura de la comunidad y la función del ecosistema (Schleuter et al. 2010), es baja en regiones de fuerte estrés abiótico y aumenta en regiones donde las interacciones competitivas son relativamente más fuertes ( Weiher y Keddy 1995).
+
+En la presente práctica mostraremos como podemos abordar estos temas y aportar a la comprención de los factores que definen la estructura de la comunidad.
+
+#Respuestas de los rasgos a un gradiente
+
+Como hemos visto hasta ahora, los rasgos podrían variar a lo largo de un gradiente ambiental natural o de disturbio. Una de las primeras preguntas que nos hacemos es si los cambios en los rasgos funcionales son modificados por esa gradiente. Existen varias formas de abordar esta pregunta con nuestros rasgos funcionales. Vamos inicialmente a separar los rasgos en dos tipos; rasgos de variables cuantitativas y de variables cualitativas.
+
+##Variables cuantitativas 
+
+La " _hipótesis de la relación de biomasa_ " propuesta por Grime (1998) postula que "la medida en que los rasgos de una especie afectan las propiedades del ecosistema, es probable que esté fuertemente relacionada con las contribuciones de la especie a la biomasa de la comunidad" En otras palabras el efecto del rasgo sobre la comunidad es dependiente de la abundancia relativa de cada rasgo en la comunidad. Implica que el funcionamiento de los ecosistemas está determinado en gran medida por los valores de los rasgos de los rasgos dominantes en la biomasa vegetal.
+
+Para probar la hipótesis de la relación de biomasa, Garnier et al. (2004) propusieron hacer un cálculo de los rasgos agregados a nivel de la comunidad, usando los valores de abundancia relativa de las especies de la siguiente manera:
+
+$$CWM = \sum_{i=1}^{n} p_i*rasgo_i$$
+
+
+donde $p_i$ es la abundancia relativa de la especie $i$ en relación a la biomasa máxima de la comunidad, $n$ es el número de especies, y el $rasgo_i$ es el valor del rasgo de la especie $i$.
+
+Esta medida nos permite cunatificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos como imp´lementar esta medida en r.
+
+```{r}
+##Cargamos los datos
+library(readxl)
+
+trait <- read_excel("trait.xlsx")
+vege <- read_excel("vegetacion.xlsx")
+
+##Reformamos los datos para calcular CWM
+vegeT <- data.frame(Especies=colnames(vege[,-1]), t(vege[,-1]))
+rownames(vegeT) <- 1:71
+colnames(vegeT)[-1] <- vege$COD.PAR
+
+##Hacemos una función para calcular
+
+cwm <- function(x, trait, sppV, sppT, Ntrait){
+  #x= matriz de datos de abundancia
+  #trait = matriz de datos de caracteres por especie
+  #sppV = el nombre de la columna especies en vegetación
+  #sppT = el nombre de la columna especies en trait
+  #Ntrait = el nombre del trait a analizar
+  
+  #Convertimos en abundancia relativa por sitio
+  
+  xAR <- data.frame(Especies=x[,sppV],x[,colnames(x)!=sppV]/
+                      colSums(x[,colnames(x)!=sppV]))
+  colnames(trait)[which(colnames(trait)==sppT)] <- "Especies"
+  xT <- merge(xAR, trait[, c("Especies",Ntrait)], by="Especies")
+  
+  #Calculamos el cwm
+  cwm <- colSums(xT[,2:(ncol(xT)-1)]*xT[,ncol(xT)])
+  return(cwm)
+  }
+
+##Calculamos CWM usando la función
+
+CWM.Dens <- cwm(x=vegeT, trait = trait, sppV = "Especies", 
+                sppT = "especies", Ntrait = "Altura")
+
+##Cargamos los datos de las parcelas
+par <- read_excel("parcelas.xlsx")
+
+#Ordenamos los datos
+cwmPar <- data.frame(parcelas=names(CWM.Dens), Altura = CWM.Dens)
+
+#los juntamos con los datos de distancias como medida de disturbio
+
+cwmPar <- merge(cwmPar, par[,c(3,12,15,23)], by.x = "parcelas", by.y="COD.PAR")
+
+#Ajustamos un modelo y Graficamos
+mod <- glm(cwmPar$Altura~cwmPar$Caprino)
+summary(mod)
+
+plot(cwmPar$Caprino, cwmPar$Altura, pch = 19, col = rgb(0,0,0,0.5),
+     xlab="Distancia en m", ylab="Densidad Madera")
+abline(mod)
+```
+
+###Ejercicio 1
+
+Explora las otras variables cuantitativas que se encuentran en la matriz de traits y relacionalos con las dos variables de disturbio, distancia y fecas.
+
+
+##Variables Cualitativas
+
+Aunque el CWM es una medida que nos brinda interesante información sobre los rasgos dominantes dentro de la comunidad, esta medida no puede ser usada con variables cualitativas. En este caso es necesario tener una aproximación diferente, podemos usar una aproximación de análisis multivariante. Lo que haremos es obtener la frecuencia de cada nivel de la variable categórica y hacer una ordenación con estos datos.
