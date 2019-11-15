@@ -1,3 +1,4 @@
+
 ---
 title: "Diversidad Funcional"
 author: "Carlos Iván Espinosa"
@@ -15,11 +16,11 @@ output:
 
 #Introducción
 
-Una pregunta clásica en ecología vegetal es cómo se ensamblan las comunidades locales a partir de un grupo disponible de especies (Diamond 1975; Weiher, Clarke y Keddy 1998; Cornwell y Ackerly 2009). Dos hipótesis han sido propuestas para responder esta pregunta. Por un lado, Hubbell (2001) propone que el ensamble de comunidades es un proceso determinado por la estocasticidad demográfica, este postulado propone las diferentes especies no tienen ventajas competitivas entre ellas, así aunque las especies sean funcionalmnete distintas esa diferencia no beneficia a la hora de establecerse en un determinado sitio. La segunda hipótesis propone que diferentes especies de plantas tienen más éxito bajo diferentes condiciones en el paisaje, y esto se debe a que tienen diferentes rasgos (Schimper en 1898). 
+Una pregunta clásica en ecología vegetal es cómo se ensamblan las comunidades locales a partir de un grupo disponible de especies (Diamond 1975; Weiher, Clarke y Keddy 1998; Cornwell y Ackerly 2009). Dos hipótesis han sido propuestas para responder esta pregunta. Por un lado, Hubbell (2001) propone que el ensamble de comunidades es un proceso determinado por la estocasticidad demográfica, este postulado propone las diferentes especies no tienen ventajas competitivas entre ellas, así aunque las especies sean funcionalmente distintas esa diferencia no beneficia a la hora de establecerse en un determinado sitio. La segunda hipótesis propone que diferentes especies de plantas tienen más éxito bajo diferentes condiciones en el paisaje, y esto se debe a que tienen diferentes rasgos (Schimper en 1898). 
 
-De esta forma, se supone que el ensamblaje de las comunidades representa el resultado de diferentes fuerzas. Sin embargo esas fuerzas pueden operar de forma opuesta a lo largo de un nicho. Bajo condiciones abióticas fuertes, las especies con determinados caracteres son filtradas incrementando la similitud de rasgos de la comunidad esto es conocido como _filtrado ambiental_ (Weiher y Keddy 1995; Cornwell, Schwilk y Ackerly 2006). Por otro lado, esta la idea que las especies funcionalmente similares explotan los recursos de igual forma, por lo que son más proclives a tener interacciones negativas, de esta forma las especies bajo condiciones ambientales idóneas  evitan ser demasiado similares a las especies coexistentes (partición de nicho, limitación de similitud) (MacArthur y Levins 1967; Chesson 2000). Con base en estos supuestos, una expectativa generalizada es que la diversidad funcional, la diversidad de rasgos que influyen en la estructura de la comunidad y la función del ecosistema (Schleuter et al. 2010), es baja en regiones de fuerte estrés abiótico y aumenta en regiones donde las interacciones competitivas son relativamente más fuertes ( Weiher y Keddy 1995).
+De esta forma, se supone que el ensamblaje de las comunidades representa el resultado de diferentes fuerzas. Sin embargo esas fuerzas pueden operar de forma opuesta a lo largo de un nicho. Bajo condiciones abióticas fuertes, las especies con determinados caracteres son filtradas incrementando la similitud de rasgos de la comunidad esto es conocido como _filtrado ambiental_ (Weiher y Keddy 1995; Cornwell, Schwilk y Ackerly 2006). Por otro lado, está la idea que las especies funcionalmente similares explotan los recursos de igual forma, por lo que son más proclives a tener interacciones negativas, de esta forma las especies bajo condiciones ambientales idóneas  evitan ser demasiado similares a las especies coexistentes (partición de nicho, limitación de similitud) (MacArthur y Levins 1967; Chesson 2000). Con base en estos supuestos, una expectativa generalizada es que la diversidad funcional, la diversidad de rasgos que influyen en la estructura de la comunidad y la función del ecosistema (Schleuter et al. 2010), es baja en regiones de fuerte estrés abiótico y aumenta en regiones donde las interacciones competitivas son relativamente más fuertes ( Weiher y Keddy 1995).
 
-En la presente práctica mostraremos como podemos abordar estos temas y aportar a la comprención de los factores que definen la estructura de la comunidad.
+En la presente práctica mostraremos como podemos abordar estos temas y aportar a la comprensión de los factores que definen la estructura de la comunidad.
 
 #Respuestas de los rasgos a un gradiente
 
@@ -36,7 +37,7 @@ $$CWM = \sum_{i=1}^{n} p_i*rasgo_i$$
 
 donde $p_i$ es la abundancia relativa de la especie $i$ en relación a la biomasa máxima de la comunidad, $n$ es el número de especies, y el $rasgo_i$ es el valor del rasgo de la especie $i$.
 
-Esta medida nos permite cunatificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos como implementar esta medida en r. Podemos acceder aquí a los datos de [vegetación](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx), [traits](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/trait.xlsx) y [parcelas](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx)
+Esta medida nos permite cuantificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos cómo implementar esta medida en r. Podemos acceder aquí a los datos de [vegetación](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx), [traits](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/trait.xlsx) y [parcelas](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx)
 
 ```{r}
 ##Cargamos los datos
@@ -97,7 +98,7 @@ abline(mod)
 
 ###Ejercicio 1
 
-Explora las otras variables cuantitativas que se encuentran en la matriz de traits y relacionalos con las dos variables de disturbio, distancia y fecas.
+Explora las otras variables cuantitativas que se encuentran en la matriz de traits y relacionarlos con las dos variables de disturbio, distancia y fecas.
 
 
 ##Variables Cualitativas
