@@ -36,7 +36,7 @@ $$CWM = \sum_{i=1}^{n} p_i*rasgo_i$$
 
 donde $p_i$ es la abundancia relativa de la especie $i$ en relación a la biomasa máxima de la comunidad, $n$ es el número de especies, y el $rasgo_i$ es el valor del rasgo de la especie $i$.
 
-Esta medida nos permite cunatificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos como imp´lementar esta medida en r.
+Esta medida nos permite cunatificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos como implementar esta medida en r. Podemos acceder aquí a los datos de [vegetación](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx), [traits](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/trait.xlsx) y [parcelas](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx)
 
 ```{r}
 ##Cargamos los datos

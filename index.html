@@ -312,7 +312,7 @@ div.tocify {
 <p>Para probar la hipótesis de la relación de biomasa, Garnier et al. (2004) propusieron hacer un cálculo de los rasgos agregados a nivel de la comunidad, usando los valores de abundancia relativa de las especies de la siguiente manera:</p>
 <p><span class="math display">\[CWM = \sum_{i=1}^{n} p_i*rasgo_i\]</span></p>
 <p>donde <span class="math inline">\(p_i\)</span> es la abundancia relativa de la especie <span class="math inline">\(i\)</span> en relación a la biomasa máxima de la comunidad, <span class="math inline">\(n\)</span> es el número de especies, y el <span class="math inline">\(rasgo_i\)</span> es el valor del rasgo de la especie <span class="math inline">\(i\)</span>.</p>
-<p>Esta medida nos permite cunatificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos como imp´lementar esta medida en r.</p>
+<p>Esta medida nos permite cunatificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos como implementar esta medida en r. Podemos acceder aquí a los datos de <a href="https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx">vegetación</a>, <a href="https://github.com/Civanespinosa/Diversidad-funcional/blob/master/trait.xlsx">traits</a> y <a href="https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx">parcelas</a></p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">##Cargamos los datos
 <span class="kw">library</span>(readxl)</code></pre></div>
 <pre><code>## Warning: package 'readxl' was built under R version 3.5.3</code></pre>
