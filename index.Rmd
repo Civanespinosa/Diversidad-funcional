@@ -37,7 +37,7 @@ $$CWM = \sum_{i=1}^{n} p_i*rasgo_i$$
 
 donde $p_i$ es la abundancia relativa de la especie $i$ en relación a la biomasa máxima de la comunidad, $n$ es el número de especies, y el $rasgo_i$ es el valor del rasgo de la especie $i$.
 
-Esta medida nos permite cuantificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos cómo implementar esta medida en r. Podemos acceder aquí a los datos de [vegetación](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx), [traits](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/trait.xlsx) y [parcelas](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx)
+Esta medida nos permite cuantificar los cambios en la media ponderada de los rasgos y por tanto interpretar como esta media cambia en relación a gradientes ambientales. Veamos cómo implementar esta medida en r. Podemos acceder aquí a los datos de [vegetación](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/vegetacion.xlsx), [traits](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/trait.xlsx) y [parcelas](https://github.com/Civanespinosa/Diversidad-funcional/blob/master/parcelas.xlsx)
 
 ```{r}
 ##Cargamos los datos
@@ -80,19 +80,24 @@ CWM.Dens <- cwm(x=vegeT, trait = trait, sppV = "Especies",
 ##Cargamos los datos de las parcelas
 par <- read_excel("parcelas.xlsx")
 
+##Reducimos las parcelas
+parF <- par[,c(3,12,23)]
+parF <- aggregate(parF[,2:3], by=list("COD.PAR"=parF$COD.PAR),
+                  min)
+
 #Ordenamos los datos
 cwmPar <- data.frame(parcelas=names(CWM.Dens), Altura = CWM.Dens)
 
 #los juntamos con los datos de distancias como medida de disturbio
 
-cwmPar <- merge(cwmPar, par[,c(3,12,15,23)], by.x = "parcelas", by.y="COD.PAR")
+cwmPar <- merge(cwmPar, parF, by.x = "parcelas", by.y="COD.PAR")
 
 #Ajustamos un modelo y Graficamos
 mod <- glm(cwmPar$Altura~cwmPar$Caprino)
 summary(mod)
 
 plot(cwmPar$Caprino, cwmPar$Altura, pch = 19, col = rgb(0,0,0,0.5),
-     xlab="Distancia en m", ylab="Densidad Madera")
+     xlab="Distancia en m", ylab="Altura")
 abline(mod)
 ```
 
@@ -104,3 +109,69 @@ Explora las otras variables cuantitativas que se encuentran en la matriz de trai
 ##Variables Cualitativas
 
 Aunque el CWM es una medida que nos brinda interesante información sobre los rasgos dominantes dentro de la comunidad, esta medida no puede ser usada con variables cualitativas. En este caso es necesario tener una aproximación diferente, podemos usar una aproximación de análisis multivariante. Lo que haremos es obtener la frecuencia de cada nivel de la variable categórica y hacer una ordenación con estos datos.
+
+```{r}
+##Unimos los datos de vegetación con los traits 
+##categóricos
+
+vgT <- merge(vegeT, trait[, c(1,7,8)], by.x = "Especies",
+             by.y = "especies")
+
+crec <- aggregate(vgT[,2:73], by=list(crec=vgT$Crecimiento),
+                  sum)
+crecT <- t(crec[,-1])
+colnames(crecT) <- crec[,1]
+  
+fen <- aggregate(vgT[,2:73], by=list(fen=vgT$Fenolog.a.hoja),
+                  sum)
+fenT <- t(fen[,-1])
+colnames(fenT) <- fen[,1] 
+
+##Hacemos una ordenación
+##Verificamos la respuesta
+library(vegan)
+ordCrec <- decorana(crecT)
+ordCrec
+ordFen <- decorana(fenT)
+ordFen
+
+##Hacemos un pca
+
+pcaCrec <- rda(crecT)
+summary(pcaCrec)
+pcaFen <- rda(fenT)
+summary(pcaFen)
+
+par(mfcol=c(1,2), mar=c(3,3,1,1), oma=c(1,1,2,1), mgp=c(1.5,0.4,0), tck=-0.03)
+plot(pcaCrec, scaling=2, type="n", las=1)
+points(pcaCrec, display = "sites", col=rgb(0,0,0,0.5), pch=16, cex=0.8)
+text(pcaCrec, display = "spec",cex=0.7,pos=2, col="darkblue")
+mtext("a. Crecimiento", side=3, cex=0.9, font=2)
+
+plot(pcaFen, scaling=2, type="n", las=1)
+points(pcaFen, display = "sites", col=rgb(0,0,0,0.6), pch=16, cex=0.8)
+text(pcaFen, display = "spec",cex=0.7)
+mtext("b. Fenología", side=3, cex=0.9, font=2)
+
+traitC <- data.frame(COD.PAR=names(summary(pcaFen)$sites[,1]),
+                     fen=summary(pcaFen)$sites[,1],
+                     crec=summary(pcaCrec)$sites[,1])
+
+##Juntamos con los datos de parcelas
+traitCP <- merge(traitC, parF, by="COD.PAR")
+
+#Ajustamos los modelos
+
+modCD <- lm(crec~DISTANCIA, data=traitCP)
+summary(modCD)
+modCC <- lm(crec~Caprino, data=traitCP)
+summary(modCC)
+
+modFD <- lm(fen~DISTANCIA, data=traitCP)
+summary(modFD)
+modFC <- lm(fen~Caprino, data=traitCP)
+summary(modFC)
+
+
+```
+
